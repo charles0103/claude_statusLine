@@ -34,3 +34,7 @@
 
 - **版本**：1.0.1 (Enhanced for Windows)
 - **主要改進**：UTF-8 編碼支援、錯誤處理增強、快取格式修正
+
+## License
+
+本專案採用 [MIT License](LICENSE) 授權,歡迎自由使用、修改與散布。
