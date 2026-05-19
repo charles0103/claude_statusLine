@@ -2,6 +2,10 @@
 
 這是針對 Windows 環境優化的 Claude Code 狀態列工具，修正了原版在 Windows 上的編碼和錯誤處理問題。
 
+## 預覽
+
+![Status Line Screenshot](docs/screenshot.png)
+
 ## 功能特色
 
 - **即時 Context 用量**：顯示當前對話的 token 使用量，附帶彩色進度條
