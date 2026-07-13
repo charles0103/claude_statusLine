@@ -1,44 +1,74 @@
-# Claude StatusLine for Windows (Enhanced Version)
+# Claude Code StatusLine 設定備份
 
-這是針對 Windows 環境優化的 Claude Code 狀態列工具，修正了原版在 Windows 上的編碼和錯誤處理問題。
+Claude Code 狀態列的個人設定備份與新電腦安裝步驟。
+
+> **目前使用版本：[cship](https://github.com/stephenleo/cship)**（Rust 編譯、相容 Starship 設定格式）。
+> 本 repo 早期的 Python 版工具（`context-bar.py`）已停用，檔案保留在原處僅供參考，見文末「舊版（已停用）」。
 
 ## 預覽
 
-![Status Line Screenshot](docs/screenshot.png)
+第一行由 Starship 渲染（目錄、Git 分支、Node 版本），第二行是 cship 原生模組（模型、費用、Context 用量進度條、5h/7d API 用量）。
 
-## 功能特色
+## 新電腦安裝步驟（Windows）
 
-- **即時 Context 用量**：顯示當前對話的 token 使用量，附帶彩色進度條
-- **API 用量限制**：顯示 5 小時和 7 天的 API 使用率
-- **模型資訊**：顯示當前使用的模型（Opus4.5、Sonnet4 等）
-- **專案資訊**：顯示當前目錄、Git 分支和未提交的變更數量
+### 1. 安裝 Nerd Font 字型（狀態列圖示需要）
 
-## 相較原版的改進
+```powershell
+winget install DEVCOM.JetBrainsMonoNerdFont
+```
 
-1. **修正 UTF-8 編碼問題**：解決 Windows PowerShell 導致的 `UnicodeEncodeError`。
-2. **增強錯誤處理**：處理 API 回應中的 `None` 值，增加日誌記錄。
-3. **修正快取格式問題**：確保快取檔案格式固定，避免解析錯誤。
+安裝後在 Windows Terminal 設定中選用該字型。
 
-## 系統需求
+### 2. 安裝 Starship（渲染第一行）
 
-- **Python 3.8+**
-- **git** 在 PATH 中
-- **keyring** 套件
+```powershell
+winget install Starship.Starship
+```
 
-## 快速安裝
+Starship 使用預設設定即可，不需要 `starship.toml`。
 
-1. 下載此專案
-2. 在 PowerShell 中執行：
-   ```powershell
-   .\install.ps1
-   ```
-3. 重啟 Claude Code
+### 3. 安裝 cship（在 Git Bash 中執行）
 
-## 版本資訊
+```bash
+curl -fsSL https://cship.dev/install.sh | bash
+```
 
-- **版本**：1.0.1 (Enhanced for Windows)
-- **主要改進**：UTF-8 編碼支援、錯誤處理增強、快取格式修正
+安裝腳本會自動：
+- 下載執行檔到 `~/.local/bin/cship`
+- 建立起始設定檔 `~/.config/cship.toml`
+- 寫入 `~/.claude/settings.json` 的 `statusLine` 設定：
+
+```json
+"statusLine": {
+  "type": "command",
+  "command": "C:/Users/<使用者>/.local/bin/cship.exe"
+}
+```
+
+### 4. 套用本 repo 的自訂設定檔
+
+把本 repo 的 [`cship.toml`](./cship.toml) 複製到 `C:\Users\<使用者>\.config\cship.toml`（覆蓋安裝腳本產生的起始設定）。
+
+此設定包含：
+- 第一行：`$starship_prompt` 完整 Starship passthrough
+- 第二行：模型（🤖）、費用（💰，$2 黃色警戒／$5 紅色）、CTX 進度條（40% 黃色／70% 紅色）、5h／7d API 用量（60% 黃色／80% 紅色）
+
+### 5. 重啟 Claude Code
+
+狀態列即生效。
+
+## 常用指令
+
+```powershell
+cship --version    # 版本
+cship explain      # 顯示每個模組目前的渲染值與設定來源（調整樣式時好用）
+cship uninstall    # 移除執行檔並清掉 settings.json 設定
+```
+
+## 舊版（已停用）
+
+`context-bar.py`、`update-usage-cache.py`、`install.ps1` 為早期針對 Windows 修正編碼與錯誤處理的 Python 版狀態列工具（v1.0.1），已由 cship 取代，保留僅供參考。
 
 ## License
 
-本專案採用 [MIT License](LICENSE) 授權,歡迎自由使用、修改與散布。
+本專案採用 [MIT License](LICENSE) 授權，歡迎自由使用、修改與散布。
