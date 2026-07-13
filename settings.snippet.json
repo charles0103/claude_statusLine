@@ -1,0 +1,6 @@
+{
+  "statusLine": {
+    "type": "command",
+    "command": "C:/Users/<YOUR_USERNAME>/.local/bin/cship.exe"
+  }
+}
