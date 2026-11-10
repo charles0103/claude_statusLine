@@ -51,7 +51,7 @@ Claude Code
 | `herdr/mods/git-diff/` | diff pane（`main.js` 畫面、`diff.js` 讀取與解析、`diff.test.mjs` 測試） |
 | `herdr/mods/my-tabs/` | 官方 `tabs` 的複本：Changes 按鈕換成「Git」（開啟 Changes＋圖表上下並排） |
 | `herdr/mods/my-pane/` | 官方 `pane`（pane 標題列）的複本：git-diff pane 標題顯示「差異 · 檔名」，其他 pane 不變 |
-| `herdr/mods/my-files/` | 官方 `files` 的複本：右鍵／Alt＋點擊「插入到對話」（`mention.js` 路徑格式、`mention.test.mjs` 測試） |
+| `herdr/mods/my-files/` | 官方 `files` 的複本：右鍵／Alt＋點擊「插入到對話」（`mention.js` 路徑格式、`mention.test.mjs` 測試）；依檔案類型顯示彩色圖示（`icons/` 14 個自繪 SVG、`icons.js` 對應規則、`icons.test.mjs` 測試） |
 | `herdr/layouts/my-main.json` | 官方 `main` 版面的複本：右側面板的 Changes 與 `git-graph` 包成上下並排的 `git` 區塊、標籤列改用 `my-tabs`、pane 標題列改用 `my-pane`、Files 改用 `my-files` |
 
 安裝（Herdr 執行中即可，存檔即生效）：
@@ -70,7 +70,7 @@ herdr-app do layout.switch --name my-main
 
 - 官方版面與 mod 不會被修改；Herdr 更新後若官方 `main`／`tabs`／`pane`／`files` 有新功能，需重新 `layout.clone`／`mod.clone` 再套用上述改動。
 - 切回原版：`ctrl-shift-l`；移除：刪掉上表六項。
-- 測試：`node herdr\mods\git-graph\files.test.mjs <repo 路徑>`、`node herdr\mods\git-diff\diff.test.mjs`、`node herdr\mods\my-files\mention.test.mjs`
+- 測試：`node herdr\mods\git-graph\files.test.mjs <repo 路徑>`、`node herdr\mods\git-diff\diff.test.mjs`、`node herdr\mods\my-files\mention.test.mjs`、`node herdr\mods\my-files\icons.test.mjs`
 
 ### Herdr 更新後的檢查
 

@@ -1,5 +1,12 @@
 # Claude Code 狀態列修改紀錄
 
+## 2026-11-10 — Herdr Files 面板依檔案類型顯示圖示
+
+- `my-files` 新增 14 個自繪彩色 SVG 圖示（Markdown、Python、JS、TS、JSON、設定檔、Shell、Git、授權、圖片、文字、HTML、CSS、壓縮檔），依副檔名／檔名對應（`icons.js`，不分大小寫）；未知類型與資料夾沿用原圖示。
+- 清晰度：Herdr 的 `image()` 依 SVG 固有尺寸點陣化，16×16 會模糊。改為 32×32 設計網格、`width/height=64`、顯示 16px，實測前後 4 倍放大比較明顯清晰。
+- 圖示由 Codex 自行繪製，未使用第三方圖示。
+- 驗證：`icons.test.mjs`、`mention.test.mjs` 通過；檢查腳本 12 項全 ✅。
+
 ## 2026-11-10 — Herdr Files 面板「插入到對話」
 
 - 新增 `herdr/mods/my-files/`（官方 `files` 的複本）：對檔案右鍵「插入到對話」或 Alt＋點擊，在目前分頁的 AI agent 輸入框插入 `@相對路徑 `，不送出。
