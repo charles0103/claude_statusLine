@@ -17,7 +17,7 @@ $ErrorActionPreference = 'Stop'
 $results = [Collections.Generic.List[object]]::new()
 $herdrRoot = Join-Path $env:USERPROFILE '.config/herdr-app'
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$mods = @('git-graph', 'git-diff', 'my-tabs', 'my-pane')
+$mods = @('git-graph', 'git-diff', 'my-tabs', 'my-pane', 'my-files')
 $excluded = @('gpui-kit.d.ts', 'jsconfig.json')
 
 function Add-Result([string]$Level, [string]$Name, [string]$Message) {
@@ -121,7 +121,7 @@ try {
 } catch { Add-Result '❌' '錯誤檔案' $_.Exception.Message }
 
 try {
-    $official = Get-Hashes $herdrRoot @('layouts/main.json','mods/tabs','mods/pane')
+    $official = Get-Hashes $herdrRoot @('layouts/main.json','mods/tabs','mods/pane','mods/files')
     if ($UpdateBaseline -or -not (Test-Path -LiteralPath $BaselinePath)) {
         $baseline = [ordered]@{ generated_at=[DateTimeOffset]::Now.ToString('o'); cloned_from_version=$cloneVersion; files=$official }
         $json = ConvertTo-Json -InputObject $baseline -Depth 6
@@ -135,7 +135,7 @@ try {
         $changes = @(Compare-Hashes $baseline.files $official)
         if ($changes.Count) {
             foreach ($change in $changes) { Write-Host "官方檔案$($change.Change)：$($change.Path)" }
-            foreach ($group in @('layouts/main.json','mods/tabs/','mods/pane/')) {
+            foreach ($group in @('layouts/main.json','mods/tabs/','mods/pane/','mods/files/')) {
                 if (@($changes | Where-Object { $_.Path.StartsWith($group) }).Count) {
                     $command = if ($group -eq 'layouts/main.json') { 'layout.clone' } else { 'mod.clone' }
                     Write-Host "官方 $group 已更新，若想取得新功能，需重新 $command 並套用 README 記載的改動。"

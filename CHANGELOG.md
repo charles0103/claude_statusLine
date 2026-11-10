@@ -1,5 +1,13 @@
 # Claude Code 狀態列修改紀錄
 
+## 2026-11-10 — Herdr Files 面板「插入到對話」
+
+- 新增 `herdr/mods/my-files/`（官方 `files` 的複本）：對檔案右鍵「插入到對話」或 Alt＋點擊，在目前分頁的 AI agent 輸入框插入 `@相對路徑 `，不送出。
+- 原因：Herdr 的 mod 介面沒有拖曳來源 API，無法像 VS Code 從檔案樹拖進對話。
+- 以剪貼簿＋`terminal.paste` 插入；貼上前確認焦點與剪貼簿未變，約 300ms 後還原原本文字剪貼簿（使用者已改動則不覆蓋）。
+- `my-main.json` 的 Files 改用 `my-files`；檢查腳本納入 `my-files` 與官方 `files` 基準。
+- 驗證：`mention.test.mjs` 通過、檢查腳本 12 項全 ✅；使用者實測右鍵與 Alt＋點擊皆正常。
+
 ## 2026-11-10 — 新增 Herdr 更新後檢查腳本
 
 - `herdr/check-herdr.ps1`：檢查 Herdr 狀態、自訂 mod、版面、錯誤檔、Node 測試；偵測官方 `main`／`tabs`／`pane` 變動與備份一致性。
