@@ -1,5 +1,11 @@
 # Claude Code 狀態列修改紀錄
 
+## 2026-11-10 — Herdr 右側面板 Changes 與圖表上下並排
+
+- 標籤列 Changes、圖表兩顆按鈕合併為「Git」；右側面板上方 Changes、下方圖表（預設 1:2，可拖曳）。Files 維持獨立。
+- 各 space 先前記住的 `changes`／`git-graph` 面板自動對應到 `git`。
+- 只改 `my-main.json`（`panel-body`）與 `my-tabs`；官方檔案未修改。
+
 ## 2026-11-10 — Herdr diff pane 標題改為「差異」
 
 - 新增 `herdr/mods/my-pane/`（官方 `pane` 標題列的複本）：git-diff pane 標題顯示「差異 · 檔名」，其他 pane 不變。

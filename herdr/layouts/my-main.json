@@ -135,18 +135,36 @@
                       }
                     },
                     {
-                      "id": "changes",
-                      "type": "block",
-                      "content": {
-                        "mod": "changes"
-                      }
-                    },
-                    {
-                      "id": "git-graph",
-                      "type": "block",
-                      "content": {
-                        "mod": "git-graph"
-                      }
+                      "id": "git",
+                      "type": "column",
+                      "divider": {
+                        "width": 1,
+                        "color": "border"
+                      },
+                      "children": [
+                        {
+                          "id": "changes",
+                          "type": "block",
+                          "content": {
+                            "mod": "changes"
+                          },
+                          "size": {
+                            "weight": 1
+                          },
+                          "min": 120
+                        },
+                        {
+                          "id": "git-graph",
+                          "type": "block",
+                          "content": {
+                            "mod": "git-graph"
+                          },
+                          "size": {
+                            "weight": 2
+                          },
+                          "min": 160
+                        }
+                      ]
                     }
                   ],
                   "active": "files"

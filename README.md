@@ -35,7 +35,7 @@ Claude Code
 
 ## Herdr 圖表面板（選用）
 
-在 [Herdr](https://herdr.dev) 右側面板加一顆「圖表」按鈕（與 Files、Changes 並列），仿 VS Code Source Control Graph：
+在 [Herdr](https://herdr.dev) 標籤列把 Changes 換成一顆「Git」按鈕（與 Files 並列）：右側面板上方 Changes、下方「圖表」，中間分隔線可拖曳，仿 VS Code 原始碼控制畫面。圖表功能：
 
 - 分支車道線、節點留白、圓角轉彎；HEAD 為空心圓。
 - 分支徽章：同步的本地／遠端分支合併成 `main ↑↓`，隱藏 `origin/HEAD`，放不下時收合為 `+N`。
@@ -47,9 +47,9 @@ Claude Code
 |---|---|
 | `herdr/mods/git-graph/` | 圖表面板本體（`main.js` 畫面、`lanes.js` 車道配置、`data.js` git 讀取、`files.test.mjs` 測試） |
 | `herdr/mods/git-diff/` | diff pane（`main.js` 畫面、`diff.js` 讀取與解析、`diff.test.mjs` 測試） |
-| `herdr/mods/my-tabs/` | 官方 `tabs` 的複本，多了「圖表」按鈕 |
+| `herdr/mods/my-tabs/` | 官方 `tabs` 的複本：Changes 按鈕換成「Git」（開啟 Changes＋圖表上下並排） |
 | `herdr/mods/my-pane/` | 官方 `pane`（pane 標題列）的複本：git-diff pane 標題顯示「差異 · 檔名」，其他 pane 不變 |
-| `herdr/layouts/my-main.json` | 官方 `main` 版面的複本：右側面板加入 `git-graph`、標籤列改用 `my-tabs`、pane 標題列改用 `my-pane` |
+| `herdr/layouts/my-main.json` | 官方 `main` 版面的複本：右側面板的 Changes 與 `git-graph` 包成上下並排的 `git` 區塊、標籤列改用 `my-tabs`、pane 標題列改用 `my-pane` |
 
 安裝（Herdr 執行中即可，存檔即生效）：
 
