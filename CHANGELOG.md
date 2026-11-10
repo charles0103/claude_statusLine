@@ -6,6 +6,7 @@
 - 處理：改裝官方 MSI 版 PS7.6.9、Machine PATH 置頂，完整重啟 Codex（舊 app-server 會沿用舊 shell 路徑）。
 - VS Code 三個終端 profile 由 `source` 改為明確 `path`，統一使用 MSI 版。
 - 已驗證沙箱日誌顯示 MSI 版 `SUCCESS`。細節見 `POWERSHELL_SANDBOX_DIAGNOSTIC.md`。
+- 不再使用 psmux：已解除安裝（winget）、刪除 `~/.tmux.conf`、移除 VS Code 的 `PowerShell (psmux)` profile。下方 2026-06-15 的 psmux 紀錄僅作歷史保留。
 
 ## 2026-06-15 — 修復 psmux 終端中文「複製出去」亂碼
 

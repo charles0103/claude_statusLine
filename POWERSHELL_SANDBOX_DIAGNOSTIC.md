@@ -118,7 +118,7 @@ Codex 重啟後，`C:\Users\charles\.codex\.sandbox\sandbox.2026-11-10.log` 記�
 
 - **不要刪除** WindowsApps 下的 `pwsh.exe`：它是商店版入口，刪除不會修正問題，也可能破壞商店版。
 - 日後 winget 升級 PowerShell 可能再裝回 MSIX 版（7.6.0 起預設），應指定 `--installer-type wix` 或直接用 MSI，並確認 MSI 目錄仍在 PATH 最前面。
-- `.tmux.conf` 的 `default-shell` 仍指向商店版路徑，未更動；若要全面統一，可改為 `C:/Program Files/PowerShell/7/pwsh.exe`。
+- psmux 已不再使用：已解除安裝、刪除 `~/.tmux.conf`，並移除 VS Code 的 `PowerShell (psmux)` profile（刪除前 `default-shell` 曾改為 MSI 版路徑）。
 - 撤回 PATH 重排：參考備份 JSON 的 `Machine` 值，以管理員權限還原；若備份後又改過 PATH，先比較差異。此操作不會解除安裝 MSI 版。
 
 ## 參考來源（查閱於 2026-11-10）
