@@ -4,6 +4,7 @@ import { focused, spaces, panes, exec, theme, settings, run, shared, setShared }
 const selectionKey = tab => `git-diff.selection.${tab}`;
 import { layoutLanes } from "./lanes.js";
 import { READ, LIMIT, readSummary, readHistory, readFiles } from "./data.js";
+import { tipLines, HoverTip, tipPlacement } from "./tips.js";
 
 function location() {
   const f = focused(), all = spaces();
@@ -48,6 +49,7 @@ const badgeWidth = badge => [...badge.label].reduce((sum, c) => sum + (c.charCod
 
 export default class GitGraph extends View {
   init(_props, cx) {
+    this.tip = new HoverTip(); this.tipBounds = new Map(); this.tipHeight = 120;
     this.rows = []; this.context = null; this.serial = 0;
     this.fileCache = new Map(); this.fileRepo = null;
     this.error = ""; this.head = ""; this.open = null; this.loading = false;
@@ -56,10 +58,12 @@ export default class GitGraph extends View {
   }
 
   refresh(cx, force = false) {
+    if (force) this.hideTip(cx);
     const target = location();
     const repo = JSON.stringify([target.on, target.cwd]);
     if (repo !== this.fileRepo) { this.fileRepo = repo; this.fileCache = new Map(); }
     if (target.key !== this.context) {
+      this.hideTip(cx);
       this.context = target.key; this.serial++; this.pending = null;
       this.signature = null; this.rows = []; this.head = ""; this.open = null;
       this.error = target.cwd ? "" : "請先選擇有資料夾的終端機";
@@ -94,7 +98,7 @@ export default class GitGraph extends View {
         if (current()) {
           changed = changed || this.loading;
           this.loading = false;
-          if (changed) cx.notify();
+          if (changed) { this.hideTip(cx); cx.notify(); }
         }
       }
     });
@@ -140,6 +144,7 @@ export default class GitGraph extends View {
   }
 
   expand(commit, cx) {
+    this.hideTip?.(cx);
     this.open = this.open === commit.hash ? null : commit.hash;
     if (this.open && !this.fileCache.has(commit.hash)) {
       const target = location(), cache = this.fileCache;
@@ -171,14 +176,15 @@ export default class GitGraph extends View {
       const selected = panes().some(p => p.tab === tab && p.mod === "git-diff") && selection?.hash === commit.hash && selection?.path === file.path && selection?.cwd === location().cwd;
       list.child(h_flex().id(`file-${commit.hash}-${file.path}`).h(23).flex_none().gap(6).items_center().rounded(3).cursor_pointer()
         .when(selected, el => el.bg(t.selected))
-        .on_click(() => {
+        .on_click((_event, cx) => {
+          this.hideTip(cx);
           const f = focused(), target = location(), existing = panes().find(p => p.tab === f.tab && p.mod === "git-diff");
           const item = {tab:f.tab,cwd:target.cwd,on:target.on,hash:commit.hash,parent:commit.parents[0] ?? "",path:file.path,oldPath:file.oldPath ?? "",status:file.status,subject:commit.subject};
           setShared(selectionKey(f.tab),item);
           if (existing) run("pane.focus",{pane:existing.pane});
           else run("pane.split",{direction:"right",mod:"git-diff",props:item});
         })
-        .hover(s => s.bg(t.hover)).tooltip(`${names[file.status] ?? file.status}：${file.oldPath ? file.oldPath + " → " : ""}${file.path}`)
+        .hover(s => s.bg(t.hover)).when(true, el => this.withTip(el, `file-${commit.hash}-${file.path}`, 'file', file))
         .child(svg("mods/files/file.svg").size(12).flex_none().text_color(iconColor))
         .child(div().min_w(0).truncate().child(file.oldPath ? `${file.oldPath} → ${file.path}` : name))
         .when(Boolean(folder) && !file.oldPath, el => el.child(div().min_w(0).truncate().text_size(10).text_color(t.muted).child(folder)))
@@ -189,11 +195,50 @@ export default class GitGraph extends View {
     return list;
   }
 
+  hideTip(cx) {
+    if (this.tip?.clear()) cx.notify();
+  }
+
+  withTip(el, id, kind, value) {
+    return el.id(id)
+      .on_mouse_move((event) => { if (event.bounds) this.tipBounds.set(id, event.bounds); })
+      .on_hover((hovered, cx) => {
+        if (!hovered) { if (this.tip.clear(id)) cx.notify(); return; }
+        const wasVisible = !!this.tip.visible;
+        const token = this.tip.enter(id, tipLines(kind, value));
+        if (wasVisible) cx.notify();
+        cx.timer.after(450, cx => { if (this.tip.reveal(token)) cx.notify(); });
+      });
+  }
+
+  tipCard(t) {
+    const tip = this.tip?.visible, bounds = tip && this.tipBounds.get(tip.id);
+    if (!bounds || !this.panelBounds) return div();
+    const top = bounds.y - this.panelBounds.y, bottom = top + bounds.height;
+    const placement = tipPlacement(this.panelHeight || 400, top, bottom, this.tipHeight);
+    const dark = settings().dark;
+    // No click/hover handlers: this decoration does not consume row actions.
+    return v_flex().id('graph-tip-card').absolute().left(6).right(6).top(placement.top)
+      .max_h(placement.maxHeight).overflow_y_scroll().px(12).py(10).gap(4)
+      .bg(dark ? '#1e3a5f' : '#e8f1ff').border(2).border_color(dark ? '#42a5ff' : '#006fce').rounded(6).shadow_md()
+      .text_size(12).text_color(dark ? '#ffffff' : '#0b1f33').whitespace_normal()
+      .on_size_change((size, cx) => { if (this.tipHeight !== size.height) { this.tipHeight = size.height; cx.notify(); } })
+      .children(tip.lines.map(line => div().min_w(0).whitespace_normal()
+        .when(!!line.bold, el => el.font_bold().text_color(dark ? '#ffd166' : '#8a5a00'))
+        .when(!!line.kind, el => el.text_color(refColor(line, t)))
+        .when(!!line.gap, el => el.mt(8))
+        .child(line.text)));
+  }
+
   render(cx) {
     if (location().key !== this.context) this.refresh(cx);
     const t = theme(), width = Math.max(24, ...this.rows.map(row => row.width * STEP + 8));
-    return v_flex().id("git-graph").size_full().min_h(0).rounded(10).overflow_hidden()
-      .on_size_change((size, cx) => { if (this.panelWidth !== size.width) { this.panelWidth = size.width; cx.notify(); } })
+    return v_flex().id("git-graph").relative().size_full().min_h(0).rounded(10).overflow_hidden()
+      .on_mouse_move(event => { if (event.bounds) this.panelBounds = event.bounds; })
+      .on_mouse_down('left', (_event, cx) => this.hideTip(cx))
+      .on_scroll_wheel((_event, cx) => this.hideTip(cx))
+      .on_hover((hovered, cx) => { if (!hovered) this.hideTip(cx); })
+      .on_size_change((size, cx) => { if (this.panelWidth !== size.width || this.panelHeight !== size.height) { this.panelWidth = size.width; this.panelHeight = size.height; this.hideTip(cx); cx.notify(); } })
       .bg(t.background).border_1().border_color(t.border).text_color(t.foreground).text_size(13)
       .child(h_flex().h(42).flex_none().px(14).gap(8).items_center().border_b(1).border_color(t.border)
         .child(svg("mods/git-graph/git-graph.svg").w(16).h(16).text_color(t.muted))
@@ -201,7 +246,7 @@ export default class GitGraph extends View {
         .child(div().text_size(10).text_color(t.muted).child(`${this.rows.length} 筆提交`))
         .child(div().flex_1())
         .child(div().id("graph-refresh").px(6).py(4).rounded(4).cursor_pointer()
-          .hover(s => s.bg(t.hover)).tooltip("重新整理提交歷史")
+          .hover(s => s.bg(t.hover)).when(true, el => this.withTip(el, 'graph-refresh', 'refresh'))
           .on_click((_event, cx) => this.refresh(cx, true))
           .child(this.loading ? "載入中…" : "重新整理")))
       .child(div().flex_1().min_h(0).relative()
@@ -220,7 +265,7 @@ export default class GitGraph extends View {
             return v_flex().w_full().min_w(width + 160 + used + (remaining ? 32 : 0)).flex_none()
               .child(h_flex().id(`commit-${c.hash}`).w_full().h(ROW).flex_none().items_center().pr(8)
                 .cursor_pointer().when(expanded, e => e.bg(t.selected)).hover(s => s.bg(t.hover))
-                .tooltip(`完整雜湊值：${c.hash}\n作者：${c.author}\n日期：${c.date.replace("T", " ")}\n分支／標籤：${c.refs.filter(ref => !ref.name.endsWith("/HEAD")).map(ref => ref.name).join("、") || "無"}\n\n${c.message}`)
+                .when(true, el => this.withTip(el, `commit-${c.hash}`, 'commit', c))
                 .on_click((_event, cx) => this.expand(c, cx))
                 .child(this.graph(row, width, t))
                 .child(div().flex_1().min_w(140).truncate().when(c.hash === this.head, e => e.font_semibold())
@@ -228,11 +273,11 @@ export default class GitGraph extends View {
                 .child(h_flex().flex_none().gap(3).ml(6)
                   .children(shownBadges.map(ref => div().flex_none().whitespace_nowrap().px(5).py(1).rounded(7).border_1()
                     .bg(`${refColor(ref, t)}22`).border_color(refColor(ref, t)).text_color(refColor(ref, t))
-                    .text_size(10).tooltip(ref.tooltip)
+                    .text_size(10).when(true, el => this.withTip(el, `badge-${c.hash}-${ref.name}`, 'badge', [ref]))
                     .child(ref.label)))
                   .when(remaining > 0, el => el.child(div().flex_none().px(5).py(1).rounded(7)
                     .bg(t.raised).text_color(t.muted).text_size(10).whitespace_nowrap()
-                    .tooltip(allBadges.map(ref => ref.tooltip).join("\n")).child(`+${remaining}`)))))
+                    .when(true, el => this.withTip(el, `badges-${c.hash}`, 'badge', allBadges)).child(`+${remaining}`)))))
               .when(expanded, e => e.child(h_flex().w_full().items_stretch().bg(t.raised)
                 .child(this.graph(row, width, t, true)).child(this.details(c, t))));
           }))
@@ -241,6 +286,7 @@ export default class GitGraph extends View {
         .child(Scrollbar.vertical("graph-list").absolute().inset_0())
         .child(Scrollbar.horizontal("graph-list").absolute().inset_0()))
       .when(this.rows.length === LIMIT, e => e.child(div().px(12).py(5).text_size(10).text_color(t.dim)
-        .child(`僅顯示最近 ${LIMIT} 筆提交；底部線段可能延伸至更早的歷史`)));
+        .child(`僅顯示最近 ${LIMIT} 筆提交；底部線段可能延伸至更早的歷史`)))
+      .child(this.tipCard(t));
   }
 }

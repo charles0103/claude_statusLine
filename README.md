@@ -41,6 +41,7 @@ Claude Code
 - 分支徽章：同步的本地／遠端分支合併成 `main ↑↓`，隱藏 `origin/HEAD`，放不下時收合為 `+N`。
 - 點選提交展開修改的檔案（`M`／`A`／`D`／`R` 上色），合併提交與第一父提交比較。
 - 點選檔案在終端機右側開 diff pane（雙欄行號、紅綠底色、長行自動換行）；點其他檔案沿用同一個 pane，關掉後終端機恢復全寬。
+- 滑鼠停留顯示高對比提示卡（深藍底、亮藍邊框、白字），取代 Herdr 內建對比過低的 tooltip。
 - 只執行唯讀 git 指令；每 5 秒檢查一次，有變化才重新載入。
 
 另外 Files 面板新增「插入到對話」：對檔案按右鍵選「插入到對話」或 Alt＋點擊，就在目前分頁的 AI agent（Claude Code、Codex）輸入框插入 `@相對路徑 `，不會自動送出。Herdr 的 mod 介面不支援拖曳來源，因此以此取代 VS Code 的拖曳檔案；借用剪貼簿貼上，約 300ms 後還原原本的文字剪貼簿。
@@ -49,7 +50,7 @@ Spaces 側欄的「+」改為先彈出選單（仿 VS Code 開啟資料夾）：
 
 | 備份檔案 | 說明 |
 |---|---|
-| `herdr/mods/git-graph/` | 圖表面板本體（`main.js` 畫面、`lanes.js` 車道配置、`data.js` git 讀取、`files.test.mjs` 測試） |
+| `herdr/mods/git-graph/` | 圖表面板本體（`main.js` 畫面、`lanes.js` 車道配置、`data.js` git 讀取、`tips.js` 提示卡、`files.test.mjs`／`tips.test.mjs` 測試） |
 | `herdr/mods/git-diff/` | diff pane（`main.js` 畫面、`diff.js` 讀取與解析、`diff.test.mjs` 測試） |
 | `herdr/mods/my-tabs/` | 官方 `tabs` 的複本：Changes 按鈕換成「Git」（開啟 Changes＋圖表上下並排） |
 | `herdr/mods/my-pane/` | 官方 `pane`（pane 標題列）的複本：git-diff pane 標題顯示「差異 · 檔名」，其他 pane 不變 |
@@ -83,7 +84,7 @@ herdr-app do layout.switch --name my-main
 .\herdr\check-herdr.ps1 -UpdateBaseline  # 重新 clone 並套用改動後，更新官方基準
 ```
 
-檢查 Herdr 狀態、六個自訂 mod 的 `herdr-app check`、`my-main.json` 與 `*.error`、五組 Node 測試（圖表、diff、插入到對話、檔案圖示、最近資料夾）（❌ 時 exit 1，可按 `ctrl-shift-l` 切回官方版面暫時恢復）；並以 `herdr/official-baseline.json`（只存官方檔案雜湊）偵測官方 `main`／`tabs`／`pane`／`files`／`spaces` 是否更新、Herdr 與 repo 備份是否一致（⚠️ 僅提醒）。
+檢查 Herdr 狀態、六個自訂 mod 的 `herdr-app check`、`my-main.json` 與 `*.error`、六組 Node 測試（圖表、diff、插入到對話、檔案圖示、最近資料夾、圖表提示卡）（❌ 時 exit 1，可按 `ctrl-shift-l` 切回官方版面暫時恢復）；並以 `herdr/official-baseline.json`（只存官方檔案雜湊）偵測官方 `main`／`tabs`／`pane`／`files`／`spaces` 是否更新、Herdr 與 repo 備份是否一致（⚠️ 僅提醒）。
 
 ## 新電腦安裝步驟（Windows）
 

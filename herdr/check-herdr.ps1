@@ -165,7 +165,8 @@ else {
         @{Name='差異解析測試'; Arguments=@((Join-Path $PSScriptRoot 'mods/git-diff/diff.test.mjs'))},
         @{Name='插入到對話路徑測試'; Arguments=@((Join-Path $PSScriptRoot 'mods/my-files/mention.test.mjs'))},
         @{Name='檔案圖示測試'; Arguments=@((Join-Path $PSScriptRoot 'mods/my-files/icons.test.mjs'))},
-        @{Name='最近資料夾測試'; Arguments=@((Join-Path $PSScriptRoot 'mods/my-spaces/recent.test.mjs'))}
+        @{Name='最近資料夾測試'; Arguments=@((Join-Path $PSScriptRoot 'mods/my-spaces/recent.test.mjs'))},
+        @{Name='圖表提示卡測試'; Arguments=@((Join-Path $PSScriptRoot 'mods/git-graph/tips.test.mjs'))}
     )) {
         try {
             $result = Invoke-ReadOnlyProcess $node.Source $test.Arguments
