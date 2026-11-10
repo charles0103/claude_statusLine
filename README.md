@@ -32,6 +32,15 @@ Claude Code
 | `CHANGELOG.md` | — | 從舊版 context-bar.py 到 cship 的完整變更與排查紀錄 |
 | `POWERSHELL_SANDBOX_DIAGNOSTIC.md` | — | Codex 沙箱無法啟動商店版 PowerShell 7 的排查與修復 |
 | `herdr/` | `C:\Users\<user>\.config\herdr-app\` | Herdr app 的自訂「圖表」面板（git 提交歷史圖），見下方「Herdr 圖表面板」 |
+| `claude/skills/codex/SKILL.md` | `~/.claude/skills/codex/SKILL.md` | `/codex` skill：在 Herdr 中把工作交給 Codex，見下方「/codex skill」 |
+
+## /codex skill（選用）
+
+在 Claude Code 輸入 `/codex`（或 `/codex <任務>`），Claude 會在**同一個 Herdr tab 的右側 pane** 開啟或沿用 Codex，寫需求書交給 Codex 實作，背景等待後由 Claude 自行驗證（看 diff、跑測試、查 Codex 實際執行的指令），使用者說要提交才提交。整個過程可在 Codex pane 即時看到，也能直接在該 pane 對 Codex 插話。
+
+- 設定 `disable-model-invocation: true`：只有輸入 `/codex` 才載入，平常不佔上下文。
+- 需在 Herdr 終端機內執行 Claude Code；不在 Herdr 時改用背景 `codex exec`（看不到即時過程）。
+- 安裝：`Copy-Item -Recurse claude\skills\codex "$env:USERPROFILE\.claude\skills\"`，之後新開的 Claude Code 對話即可使用。
 
 ## Herdr 圖表面板（選用）
 

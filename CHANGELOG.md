@@ -1,5 +1,11 @@
 # Claude Code 狀態列修改紀錄
 
+## 2026-11-10 — 新增 /codex skill（Herdr 中與 Codex 協作）
+
+- `claude/skills/codex/SKILL.md`（安裝於 `~/.claude/skills/codex/`）：輸入 `/codex` 後，在同一個 Herdr tab 右側 pane 開啟／沿用 Codex，寫需求書交辦、`hc wait` 背景等待、Claude 自行驗證，使用者同意才提交。
+- `disable-model-invocation: true`：僅手動呼叫，平常不佔上下文。
+- 收錄本次協作踩過的坑：PowerShell 傳 `--argv` JSON 會壞（改用 `hc send`）、不採信 Codex 回報、不切淺色主題、個資掃描發現即中止推送。
+
 ## 2026-11-10 — Herdr 圖表面板改用高對比提示卡
 
 - 原因：Herdr 內建 `.tooltip()` 只吃文字、顏色固定用主題 surface，在深色面板上對比太低，mod 無法自訂。
