@@ -1,5 +1,12 @@
 # Claude Code 狀態列修改紀錄
 
+## 2026-11-10 — 新增 Herdr「圖表」面板（git 提交歷史圖）
+
+- 由 Codex 撰寫、Claude 審查驗證；備份於 `herdr/`。
+- 右側面板新增「圖表」按鈕：車道線（節點留白、圓角轉彎）、分支徽章合併（`main ↑↓`）、點選提交列出修改檔案。
+- 只動自訂檔案（`mods/git-graph`、`mods/my-tabs`、`layouts/my-main.json`），官方版面與 mod 未修改。
+- 驗證：`herdr-app check` 通過；`files.test.mjs` 對 `d0b732a` 正確列出 7 個檔案；實機截圖確認展開排版。
+
 ## 2026-11-10 — 修復 Codex 沙箱無法啟動 PowerShell（商店版 PS7）
 
 - 現象：Codex `unelevated` 沙箱啟動商店版 `pwsh.exe` 失敗，`CreateProcessAsUserW failed: 5`。

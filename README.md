@@ -31,6 +31,37 @@ Claude Code
 | `settings.snippet.json` | `~/.claude/settings.json` 的 `statusLine` 區塊 | 指定 Claude Code 呼叫 cship.exe |
 | `CHANGELOG.md` | — | 從舊版 context-bar.py 到 cship 的完整變更與排查紀錄 |
 | `POWERSHELL_SANDBOX_DIAGNOSTIC.md` | — | Codex 沙箱無法啟動商店版 PowerShell 7 的排查與修復 |
+| `herdr/` | `C:\Users\<user>\.config\herdr-app\` | Herdr app 的自訂「圖表」面板（git 提交歷史圖），見下方「Herdr 圖表面板」 |
+
+## Herdr 圖表面板（選用）
+
+在 [Herdr](https://herdr.dev) 右側面板加一顆「圖表」按鈕（與 Files、Changes 並列），仿 VS Code Source Control Graph：
+
+- 分支車道線、節點留白、圓角轉彎；HEAD 為空心圓。
+- 分支徽章：同步的本地／遠端分支合併成 `main ↑↓`，隱藏 `origin/HEAD`，放不下時收合為 `+N`。
+- 點選提交展開修改的檔案（`M`／`A`／`D`／`R` 上色），合併提交與第一父提交比較。
+- 只執行唯讀 git 指令；每 5 秒檢查一次，有變化才重新載入。
+
+| 備份檔案 | 說明 |
+|---|---|
+| `herdr/mods/git-graph/` | 圖表面板本體（`main.js` 畫面、`lanes.js` 車道配置、`data.js` git 讀取、`files.test.mjs` 測試） |
+| `herdr/mods/my-tabs/` | 官方 `tabs` 的複本，多了「圖表」按鈕 |
+| `herdr/layouts/my-main.json` | 官方 `main` 版面的複本：右側面板加入 `git-graph`、標籤列改用 `my-tabs` |
+
+安裝（Herdr 執行中即可，存檔即生效）：
+
+```powershell
+$h = "$env:USERPROFILE\.config\herdr-app"
+Copy-Item -Recurse herdr\mods\git-graph, herdr\mods\my-tabs "$h\mods\"
+Copy-Item herdr\layouts\my-main.json "$h\layouts\"
+herdr-app check "$h\mods\git-graph"
+herdr-app check "$h\mods\my-tabs"
+herdr-app do layout.switch --name my-main
+```
+
+- 官方版面與 mod 不會被修改；Herdr 更新後若官方 `main`／`tabs` 有新功能，需重新 `layout.clone`／`mod.clone` 再套用上述兩處改動。
+- 切回原版：`ctrl-shift-l`；移除：刪掉上表三項。
+- 測試：`node herdr\mods\git-graph\files.test.mjs <repo 路徑>`
 
 ## 新電腦安裝步驟（Windows）
 
