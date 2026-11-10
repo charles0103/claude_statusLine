@@ -48,7 +48,8 @@ export default class GitDiff extends View {
             .bg(row.kind === "add" ? (dark ? "#248a4938" : "#30a35024") : row.kind === "delete" ? (dark ? "#d6424b38" : "#db354224") : t.background)
             .child(div().w(44).flex_none().text_color(t.dim).child(row.old === undefined ? "" : String(row.old)))
             .child(div().w(44).flex_none().text_color(t.dim).child(row.new === undefined ? "" : String(row.new)))
-            .child(div().flex_1().min_w(0).pr(10).whitespace_normal().text_color(["hunk","meta","note"].includes(row.kind) ? t.muted : t.foreground).child((row.kind === "add" ? "+ " : row.kind === "delete" ? "− " : "  ") + row.text.replace(/\t/g,"    ")))))))
+            .child(div().w(16).flex_none().text_color(t.foreground).child(row.kind === "add" ? "+" : row.kind === "delete" ? "−" : ""))
+            .child(div().flex_1().min_w(0).pr(10).whitespace_normal().text_color(["hunk","meta","note"].includes(row.kind) ? t.muted : t.foreground).child(row.text.replace(/\t/g,"    ")))))))
         .child(Scrollbar.vertical("git-diff-lines").absolute().inset_0()))
       .when(this.result.limited, el => el.child(div().p(8).text_size(11).text_color(t.muted).child("diff 過長，只顯示前 5000 行")));
   }
