@@ -75,7 +75,7 @@ herdr-app do layout.switch --name my-main
 
 - 官方版面與 mod 不會被修改；Herdr 更新後若官方 `main`／`tabs`／`pane`／`files`／`spaces` 有新功能，需重新 `layout.clone`／`mod.clone` 再套用上述改動。
 - 切回原版：`ctrl-shift-l`；移除：刪掉上表七項。
-- 測試：`node herdr\mods\git-graph\files.test.mjs <repo 路徑>`、`node herdr\mods\git-diff\diff.test.mjs`、`node herdr\mods\my-files\mention.test.mjs`、`node herdr\mods\my-files\icons.test.mjs`、`node herdr\mods\my-spaces\recent.test.mjs`
+- 測試：`node herdr\mods\git-graph\files.test.mjs <repo 路徑>`、`node herdr\mods\git-diff\diff.test.mjs`、`node herdr\mods\my-files\mention.test.mjs`、`node herdr\mods\my-files\icons.test.mjs`、`node herdr\mods\my-spaces\recent.test.mjs`、`node herdr\mods\git-graph\tips.test.mjs`
 
 ### Herdr 更新後的檢查
 
