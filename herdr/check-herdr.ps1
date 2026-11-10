@@ -17,7 +17,7 @@ $ErrorActionPreference = 'Stop'
 $results = [Collections.Generic.List[object]]::new()
 $herdrRoot = Join-Path $env:USERPROFILE '.config/herdr-app'
 $repoRoot = Split-Path -Parent $PSScriptRoot
-$mods = @('git-graph', 'git-diff', 'my-tabs', 'my-pane', 'my-files')
+$mods = @('git-graph', 'git-diff', 'my-tabs', 'my-pane', 'my-files', 'my-spaces')
 $excluded = @('gpui-kit.d.ts', 'jsconfig.json')
 
 function Add-Result([string]$Level, [string]$Name, [string]$Message) {
@@ -121,7 +121,7 @@ try {
 } catch { Add-Result '❌' '錯誤檔案' $_.Exception.Message }
 
 try {
-    $official = Get-Hashes $herdrRoot @('layouts/main.json','mods/tabs','mods/pane','mods/files')
+    $official = Get-Hashes $herdrRoot @('layouts/main.json','mods/tabs','mods/pane','mods/files','mods/spaces')
     if ($UpdateBaseline -or -not (Test-Path -LiteralPath $BaselinePath)) {
         $baseline = [ordered]@{ generated_at=[DateTimeOffset]::Now.ToString('o'); cloned_from_version=$cloneVersion; files=$official }
         $json = ConvertTo-Json -InputObject $baseline -Depth 6
@@ -135,7 +135,7 @@ try {
         $changes = @(Compare-Hashes $baseline.files $official)
         if ($changes.Count) {
             foreach ($change in $changes) { Write-Host "官方檔案$($change.Change)：$($change.Path)" }
-            foreach ($group in @('layouts/main.json','mods/tabs/','mods/pane/','mods/files/')) {
+            foreach ($group in @('layouts/main.json','mods/tabs/','mods/pane/','mods/files/','mods/spaces/')) {
                 if (@($changes | Where-Object { $_.Path.StartsWith($group) }).Count) {
                     $command = if ($group -eq 'layouts/main.json') { 'layout.clone' } else { 'mod.clone' }
                     Write-Host "官方 $group 已更新，若想取得新功能，需重新 $command 並套用 README 記載的改動。"
@@ -164,7 +164,8 @@ else {
         @{Name='圖表檔案清單測試'; Arguments=@((Join-Path $PSScriptRoot 'mods/git-graph/files.test.mjs'),$repoRoot)},
         @{Name='差異解析測試'; Arguments=@((Join-Path $PSScriptRoot 'mods/git-diff/diff.test.mjs'))},
         @{Name='插入到對話路徑測試'; Arguments=@((Join-Path $PSScriptRoot 'mods/my-files/mention.test.mjs'))},
-        @{Name='檔案圖示測試'; Arguments=@((Join-Path $PSScriptRoot 'mods/my-files/icons.test.mjs'))}
+        @{Name='檔案圖示測試'; Arguments=@((Join-Path $PSScriptRoot 'mods/my-files/icons.test.mjs'))},
+        @{Name='最近資料夾測試'; Arguments=@((Join-Path $PSScriptRoot 'mods/my-spaces/recent.test.mjs'))}
     )) {
         try {
             $result = Invoke-ReadOnlyProcess $node.Source $test.Arguments

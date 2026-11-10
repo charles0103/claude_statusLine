@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import {readFile} from 'node:fs/promises';
+const source = await readFile(new URL('./recent.js', import.meta.url), 'utf8');
+const {recentFolders} = await import('data:text/javascript;base64,' + Buffer.from(source).toString('base64'));
+const rows = ['C:\\Users\\charles', 'c:/USERS/charles/', 'D:\\專案 A', 'd:/專案 a/', 'D:\\Other'].map(folder => ({folder}));
+assert.deepEqual(recentFolders(rows, '', 'C:/Users/charles').map(x => x.folder), ['D:\\專案 A', 'D:\\Other']);
+assert.equal(recentFolders(Array.from({length:12}, (_, i) => ({folder:`D:/repo${i}`}))).length, 8);
+assert.deepEqual(recentFolders([]), []);
+assert.deepEqual(recentFolders([{}, null, {folder:''}, {folder:'~'}, {folder:'bad\npath'}]), []);
+assert.deepEqual(recentFolders([{folder:'/work/A',machine:'server'}, {folder:'/work/a',machine:'server'}, {folder:'D:/local'}], 'server').map(x=>x.folder), ['/work/A','/work/a']);
+assert.equal(recentFolders([{folder:'\\\\host\\share\\Repo'}, {folder:'//HOST/share/repo/'}]).length, 1);
+assert.equal(recentFolders([{folder:'C:/'}])[0].folder, 'C:/');
+console.log('通過：Windows 大小寫與分隔符去重、排除家目錄、上限 8 筆、空清單、無效項目、機器隔離、POSIX 大小寫及 UNC 路徑。');

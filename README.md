@@ -45,6 +45,8 @@ Claude Code
 
 另外 Files 面板新增「插入到對話」：對檔案按右鍵選「插入到對話」或 Alt＋點擊，就在目前分頁的 AI agent（Claude Code、Codex）輸入框插入 `@相對路徑 `，不會自動送出。Herdr 的 mod 介面不支援拖曳來源，因此以此取代 VS Code 的拖曳檔案；借用剪貼簿貼上，約 300ms 後還原原本的文字剪貼簿。
 
+Spaces 側欄的「+」改為先彈出選單（仿 VS Code 開啟資料夾）：最近的資料夾（最多 8 筆，來自 Herdr 的 recent 與目前各 space）、「開啟資料夾…」（Windows 選擇資料夾視窗）、「從家目錄開始」。新 space 的終端機直接從選定資料夾開始。快捷鍵 `ctrl-shift-n` 與 `keys.json` 維持原樣；其他機器的 space 不提供本機資料夾選擇視窗。
+
 | 備份檔案 | 說明 |
 |---|---|
 | `herdr/mods/git-graph/` | 圖表面板本體（`main.js` 畫面、`lanes.js` 車道配置、`data.js` git 讀取、`files.test.mjs` 測試） |
@@ -52,25 +54,27 @@ Claude Code
 | `herdr/mods/my-tabs/` | 官方 `tabs` 的複本：Changes 按鈕換成「Git」（開啟 Changes＋圖表上下並排） |
 | `herdr/mods/my-pane/` | 官方 `pane`（pane 標題列）的複本：git-diff pane 標題顯示「差異 · 檔名」，其他 pane 不變 |
 | `herdr/mods/my-files/` | 官方 `files` 的複本：右鍵／Alt＋點擊「插入到對話」（`mention.js` 路徑格式、`mention.test.mjs` 測試）；依檔案類型顯示彩色圖示（`icons/` 14 個自繪 SVG、`icons.js` 對應規則、`icons.test.mjs` 測試） |
-| `herdr/layouts/my-main.json` | 官方 `main` 版面的複本：右側面板的 Changes 與 `git-graph` 包成上下並排的 `git` 區塊、標籤列改用 `my-tabs`、pane 標題列改用 `my-pane`、Files 改用 `my-files` |
+| `herdr/mods/my-spaces/` | 官方 `spaces`（左側側欄）的複本：「+」先開選單選資料夾（`recent.js` 最近資料夾整理、`recent.test.mjs` 測試） |
+| `herdr/layouts/my-main.json` | 官方 `main` 版面的複本：右側面板的 Changes 與 `git-graph` 包成上下並排的 `git` 區塊、標籤列改用 `my-tabs`、pane 標題列改用 `my-pane`、Files 改用 `my-files`、Spaces 側欄改用 `my-spaces` |
 
 安裝（Herdr 執行中即可，存檔即生效）：
 
 ```powershell
 $h = "$env:USERPROFILE\.config\herdr-app"
-Copy-Item -Recurse herdr\mods\git-graph, herdr\mods\git-diff, herdr\mods\my-tabs, herdr\mods\my-pane, herdr\mods\my-files "$h\mods\"
+Copy-Item -Recurse herdr\mods\git-graph, herdr\mods\git-diff, herdr\mods\my-tabs, herdr\mods\my-pane, herdr\mods\my-files, herdr\mods\my-spaces "$h\mods\"
 Copy-Item herdr\layouts\my-main.json "$h\layouts\"
 herdr-app check "$h\mods\git-graph"
 herdr-app check "$h\mods\git-diff"
 herdr-app check "$h\mods\my-tabs"
 herdr-app check "$h\mods\my-pane"
 herdr-app check "$h\mods\my-files"
+herdr-app check "$h\mods\my-spaces"
 herdr-app do layout.switch --name my-main
 ```
 
-- 官方版面與 mod 不會被修改；Herdr 更新後若官方 `main`／`tabs`／`pane`／`files` 有新功能，需重新 `layout.clone`／`mod.clone` 再套用上述改動。
-- 切回原版：`ctrl-shift-l`；移除：刪掉上表六項。
-- 測試：`node herdr\mods\git-graph\files.test.mjs <repo 路徑>`、`node herdr\mods\git-diff\diff.test.mjs`、`node herdr\mods\my-files\mention.test.mjs`、`node herdr\mods\my-files\icons.test.mjs`
+- 官方版面與 mod 不會被修改；Herdr 更新後若官方 `main`／`tabs`／`pane`／`files`／`spaces` 有新功能，需重新 `layout.clone`／`mod.clone` 再套用上述改動。
+- 切回原版：`ctrl-shift-l`；移除：刪掉上表七項。
+- 測試：`node herdr\mods\git-graph\files.test.mjs <repo 路徑>`、`node herdr\mods\git-diff\diff.test.mjs`、`node herdr\mods\my-files\mention.test.mjs`、`node herdr\mods\my-files\icons.test.mjs`、`node herdr\mods\my-spaces\recent.test.mjs`
 
 ### Herdr 更新後的檢查
 
@@ -79,7 +83,7 @@ herdr-app do layout.switch --name my-main
 .\herdr\check-herdr.ps1 -UpdateBaseline  # 重新 clone 並套用改動後，更新官方基準
 ```
 
-檢查 Herdr 狀態、五個自訂 mod 的 `herdr-app check`、`my-main.json` 與 `*.error`、四組 Node 測試（圖表、diff、插入到對話、檔案圖示）（❌ 時 exit 1，可按 `ctrl-shift-l` 切回官方版面暫時恢復）；並以 `herdr/official-baseline.json`（只存官方檔案雜湊）偵測官方 `main`／`tabs`／`pane`／`files` 是否更新、Herdr 與 repo 備份是否一致（⚠️ 僅提醒）。
+檢查 Herdr 狀態、六個自訂 mod 的 `herdr-app check`、`my-main.json` 與 `*.error`、五組 Node 測試（圖表、diff、插入到對話、檔案圖示、最近資料夾）（❌ 時 exit 1，可按 `ctrl-shift-l` 切回官方版面暫時恢復）；並以 `herdr/official-baseline.json`（只存官方檔案雜湊）偵測官方 `main`／`tabs`／`pane`／`files`／`spaces` 是否更新、Herdr 與 repo 備份是否一致（⚠️ 僅提醒）。
 
 ## 新電腦安裝步驟（Windows）
 
