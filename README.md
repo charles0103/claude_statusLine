@@ -40,11 +40,13 @@ Claude Code
 - 分支車道線、節點留白、圓角轉彎；HEAD 為空心圓。
 - 分支徽章：同步的本地／遠端分支合併成 `main ↑↓`，隱藏 `origin/HEAD`，放不下時收合為 `+N`。
 - 點選提交展開修改的檔案（`M`／`A`／`D`／`R` 上色），合併提交與第一父提交比較。
+- 點選檔案在終端機右側開 diff pane（雙欄行號、紅綠底色、長行自動換行）；點其他檔案沿用同一個 pane，關掉後終端機恢復全寬。
 - 只執行唯讀 git 指令；每 5 秒檢查一次，有變化才重新載入。
 
 | 備份檔案 | 說明 |
 |---|---|
 | `herdr/mods/git-graph/` | 圖表面板本體（`main.js` 畫面、`lanes.js` 車道配置、`data.js` git 讀取、`files.test.mjs` 測試） |
+| `herdr/mods/git-diff/` | diff pane（`main.js` 畫面、`diff.js` 讀取與解析、`diff.test.mjs` 測試）；pane 標題固定顯示 `git-diff`（Herdr 不提供 mod 自訂標題） |
 | `herdr/mods/my-tabs/` | 官方 `tabs` 的複本，多了「圖表」按鈕 |
 | `herdr/layouts/my-main.json` | 官方 `main` 版面的複本：右側面板加入 `git-graph`、標籤列改用 `my-tabs` |
 
@@ -52,16 +54,17 @@ Claude Code
 
 ```powershell
 $h = "$env:USERPROFILE\.config\herdr-app"
-Copy-Item -Recurse herdr\mods\git-graph, herdr\mods\my-tabs "$h\mods\"
+Copy-Item -Recurse herdr\mods\git-graph, herdr\mods\git-diff, herdr\mods\my-tabs "$h\mods\"
 Copy-Item herdr\layouts\my-main.json "$h\layouts\"
 herdr-app check "$h\mods\git-graph"
+herdr-app check "$h\mods\git-diff"
 herdr-app check "$h\mods\my-tabs"
 herdr-app do layout.switch --name my-main
 ```
 
 - 官方版面與 mod 不會被修改；Herdr 更新後若官方 `main`／`tabs` 有新功能，需重新 `layout.clone`／`mod.clone` 再套用上述兩處改動。
-- 切回原版：`ctrl-shift-l`；移除：刪掉上表三項。
-- 測試：`node herdr\mods\git-graph\files.test.mjs <repo 路徑>`
+- 切回原版：`ctrl-shift-l`；移除：刪掉上表四項。
+- 測試：`node herdr\mods\git-graph\files.test.mjs <repo 路徑>`、`node herdr\mods\git-diff\diff.test.mjs`
 
 ## 新電腦安裝步驟（Windows）
 

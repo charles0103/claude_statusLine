@@ -1,6 +1,7 @@
 import { View, div, svg, PathBuilder } from "gpui-kit";
 import { v_flex, h_flex, Scrollbar } from "gpui-base";
-import { focused, spaces, panes, exec, theme, settings } from "herdr";
+import { focused, spaces, panes, exec, theme, settings, run, shared, setShared } from "herdr";
+const selectionKey = tab => `git-diff.selection.${tab}`;
 import { layoutLanes } from "./lanes.js";
 import { READ, LIMIT, readSummary, readHistory, readFiles } from "./data.js";
 
@@ -14,7 +15,8 @@ function location() {
   const block = f?.pane === null && f?.terminal;
   const on = block ? (f.terminal.includes("/") ? f.terminal.split("/")[0] : null) : space?.machine ?? null;
   const cwd = pane?.cwd || f?.cwd || fallback?.cwd || space?.folder;
-  return { cwd, on, key: JSON.stringify([cwd, on, f?.space, f?.tab, f?.pane, f?.terminal]) };
+  // Focusing a diff pane in the same tab must keep the expanded commit visible.
+  return { cwd, on, key: JSON.stringify([cwd, on, f?.space, f?.tab]) };
 }
 
 const ROW = 28, STEP = 24;
@@ -165,7 +167,17 @@ export default class GitGraph extends View {
       const slash = file.path.lastIndexOf("/"), name = file.path.slice(slash + 1), folder = slash < 0 ? "" : file.path.slice(0, slash);
       const ext = name.split(".").pop().toLowerCase();
       const iconColor = /^(png|jpg|svg|gif|webp)$/.test(ext) ? colors[4] : ext === "py" ? colors[0] : ext === "ps1" ? colors[6] : t.muted;
-      list.child(h_flex().id(`file-${commit.hash}-${file.path}`).h(23).flex_none().gap(6).items_center().rounded(3)
+      const tab = focused()?.tab, selection = shared(selectionKey(tab));
+      const selected = panes().some(p => p.tab === tab && p.mod === "git-diff") && selection?.hash === commit.hash && selection?.path === file.path && selection?.cwd === location().cwd;
+      list.child(h_flex().id(`file-${commit.hash}-${file.path}`).h(23).flex_none().gap(6).items_center().rounded(3).cursor_pointer()
+        .when(selected, el => el.bg(t.selected))
+        .on_click(() => {
+          const f = focused(), target = location(), existing = panes().find(p => p.tab === f.tab && p.mod === "git-diff");
+          const item = {tab:f.tab,cwd:target.cwd,on:target.on,hash:commit.hash,parent:commit.parents[0] ?? "",path:file.path,oldPath:file.oldPath ?? "",status:file.status,subject:commit.subject};
+          setShared(selectionKey(f.tab),item);
+          if (existing) run("pane.focus",{pane:existing.pane});
+          else run("pane.split",{direction:"right",mod:"git-diff",props:item});
+        })
         .hover(s => s.bg(t.hover)).tooltip(`${names[file.status] ?? file.status}：${file.oldPath ? file.oldPath + " → " : ""}${file.path}`)
         .child(svg("mods/files/file.svg").size(12).flex_none().text_color(iconColor))
         .child(div().min_w(0).truncate().child(file.oldPath ? `${file.oldPath} → ${file.path}` : name))

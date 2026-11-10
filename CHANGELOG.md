@@ -1,5 +1,12 @@
 # Claude Code 狀態列修改紀錄
 
+## 2026-11-10 — Herdr 圖表面板：點檔案顯示 diff
+
+- 新增 `herdr/mods/git-diff/`：點圖表中的檔案，在終端機右側開 diff pane（雙欄行號、紅綠底色、長行自動換行），點其他檔案沿用同一個 pane。
+- 只用唯讀 `git diff`／`git show`；合併提交與第一父提交比較，根提交用 `--root`。
+- pane 標題維持 `git-diff`：Herdr 的 mod pane 標題取自 mod 名稱，未提供自訂方式。
+- 驗證：`herdr-app check` 通過、`diff.test.mjs` 通過、實機點擊與截圖確認。
+
 ## 2026-11-10 — 新增 Herdr「圖表」面板（git 提交歷史圖）
 
 - 由 Codex 撰寫、Claude 審查驗證；備份於 `herdr/`。
