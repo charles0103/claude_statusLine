@@ -1,1 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Claude Code runtime cache & logs
+usage_cache
+usage_ratelimit
+statusline.log
+usage_update.log
+*.log
+
+# Credentials (絕對不要 commit)
+.credentials.json
+credentials.json
+.env
+.env.*
+
+# IDE / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Serena
 .serena/
