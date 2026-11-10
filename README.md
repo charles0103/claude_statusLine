@@ -31,69 +31,10 @@ Claude Code
 | `settings.snippet.json` | `~/.claude/settings.json` 的 `statusLine` 區塊 | 指定 Claude Code 呼叫 cship.exe |
 | `CHANGELOG.md` | — | 從舊版 context-bar.py 到 cship 的完整變更與排查紀錄 |
 | `POWERSHELL_SANDBOX_DIAGNOSTIC.md` | — | Codex 沙箱無法啟動商店版 PowerShell 7 的排查與修復 |
-| `herdr/` | `C:\Users\<user>\.config\herdr-app\` | Herdr app 的自訂「圖表」面板（git 提交歷史圖），見下方「Herdr 圖表面板」 |
-| `claude/skills/codex/SKILL.md` | `~/.claude/skills/codex/SKILL.md` | `/codex` skill：在 Herdr 中把工作交給 Codex，見下方「/codex skill」 |
 
-## /codex skill（選用）
+## Herdr 自訂設定與 /codex skill（已搬移）
 
-在 Claude Code 輸入 `/codex`（或 `/codex <任務>`），Claude 會在**同一個 Herdr tab 的右側 pane** 開啟或沿用 Codex，寫需求書交給 Codex 實作，背景等待後由 Claude 自行驗證（看 diff、跑測試、查 Codex 實際執行的指令），使用者說要提交才提交。整個過程可在 Codex pane 即時看到，也能直接在該 pane 對 Codex 插話。
-
-- 設定 `disable-model-invocation: true`：只有輸入 `/codex` 才載入，平常不佔上下文。
-- 需在 Herdr 終端機內執行 Claude Code；不在 Herdr 時改用背景 `codex exec`（看不到即時過程）。
-- 安裝：`Copy-Item -Recurse claude\skills\codex "$env:USERPROFILE\.claude\skills\"`，之後新開的 Claude Code 對話即可使用。
-
-## Herdr 圖表面板（選用）
-
-在 [Herdr](https://herdr.dev) 標籤列把 Changes 換成一顆「Git」按鈕（與 Files 並列）：右側面板上方 Changes、下方「圖表」，中間分隔線可拖曳，仿 VS Code 原始碼控制畫面。圖表功能：
-
-- 分支車道線、節點留白、圓角轉彎；HEAD 為空心圓。
-- 分支徽章：同步的本地／遠端分支合併成 `main ↑↓`，隱藏 `origin/HEAD`，放不下時收合為 `+N`。
-- 點選提交展開修改的檔案（`M`／`A`／`D`／`R` 上色），合併提交與第一父提交比較。
-- 點選檔案在終端機右側開 diff pane（雙欄行號、紅綠底色、長行自動換行）；點其他檔案沿用同一個 pane，關掉後終端機恢復全寬。
-- 滑鼠停留顯示高對比提示卡（深藍底、亮藍邊框、白字），取代 Herdr 內建對比過低的 tooltip。
-- 只執行唯讀 git 指令；每 5 秒檢查一次，有變化才重新載入。
-
-另外 Files 面板新增「插入到對話」：對檔案按右鍵選「插入到對話」或 Alt＋點擊，就在目前分頁的 AI agent（Claude Code、Codex）輸入框插入 `@相對路徑 `，不會自動送出。Herdr 的 mod 介面不支援拖曳來源，因此以此取代 VS Code 的拖曳檔案；借用剪貼簿貼上，約 300ms 後還原原本的文字剪貼簿。
-
-Spaces 側欄的「+」改為先彈出選單（仿 VS Code 開啟資料夾）：最近的資料夾（最多 8 筆，來自 Herdr 的 recent 與目前各 space）、「開啟資料夾…」（Windows 選擇資料夾視窗）、「從家目錄開始」。新 space 的終端機直接從選定資料夾開始。快捷鍵 `ctrl-shift-n` 與 `keys.json` 維持原樣；其他機器的 space 不提供本機資料夾選擇視窗。
-
-| 備份檔案 | 說明 |
-|---|---|
-| `herdr/mods/git-graph/` | 圖表面板本體（`main.js` 畫面、`lanes.js` 車道配置、`data.js` git 讀取、`tips.js` 提示卡、`files.test.mjs`／`tips.test.mjs` 測試） |
-| `herdr/mods/git-diff/` | diff pane（`main.js` 畫面、`diff.js` 讀取與解析、`diff.test.mjs` 測試） |
-| `herdr/mods/my-tabs/` | 官方 `tabs` 的複本：Changes 按鈕換成「Git」（開啟 Changes＋圖表上下並排） |
-| `herdr/mods/my-pane/` | 官方 `pane`（pane 標題列）的複本：git-diff pane 標題顯示「差異 · 檔名」，其他 pane 不變 |
-| `herdr/mods/my-files/` | 官方 `files` 的複本：右鍵／Alt＋點擊「插入到對話」（`mention.js` 路徑格式、`mention.test.mjs` 測試）；依檔案類型顯示彩色圖示（`icons/` 14 個自繪 SVG、`icons.js` 對應規則、`icons.test.mjs` 測試） |
-| `herdr/mods/my-spaces/` | 官方 `spaces`（左側側欄）的複本：「+」先開選單選資料夾（`recent.js` 最近資料夾整理、`recent.test.mjs` 測試） |
-| `herdr/layouts/my-main.json` | 官方 `main` 版面的複本：右側面板的 Changes 與 `git-graph` 包成上下並排的 `git` 區塊、標籤列改用 `my-tabs`、pane 標題列改用 `my-pane`、Files 改用 `my-files`、Spaces 側欄改用 `my-spaces` |
-
-安裝（Herdr 執行中即可，存檔即生效）：
-
-```powershell
-$h = "$env:USERPROFILE\.config\herdr-app"
-Copy-Item -Recurse herdr\mods\git-graph, herdr\mods\git-diff, herdr\mods\my-tabs, herdr\mods\my-pane, herdr\mods\my-files, herdr\mods\my-spaces "$h\mods\"
-Copy-Item herdr\layouts\my-main.json "$h\layouts\"
-herdr-app check "$h\mods\git-graph"
-herdr-app check "$h\mods\git-diff"
-herdr-app check "$h\mods\my-tabs"
-herdr-app check "$h\mods\my-pane"
-herdr-app check "$h\mods\my-files"
-herdr-app check "$h\mods\my-spaces"
-herdr-app do layout.switch --name my-main
-```
-
-- 官方版面與 mod 不會被修改；Herdr 更新後若官方 `main`／`tabs`／`pane`／`files`／`spaces` 有新功能，需重新 `layout.clone`／`mod.clone` 再套用上述改動。
-- 切回原版：`ctrl-shift-l`；移除：刪掉上表七項。
-- 測試：`node herdr\mods\git-graph\files.test.mjs <repo 路徑>`、`node herdr\mods\git-diff\diff.test.mjs`、`node herdr\mods\my-files\mention.test.mjs`、`node herdr\mods\my-files\icons.test.mjs`、`node herdr\mods\my-spaces\recent.test.mjs`、`node herdr\mods\git-graph\tips.test.mjs`
-
-### Herdr 更新後的檢查
-
-```powershell
-.\herdr\check-herdr.ps1                  # 一般檢查
-.\herdr\check-herdr.ps1 -UpdateBaseline  # 重新 clone 並套用改動後，更新官方基準
-```
-
-檢查 Herdr 狀態、六個自訂 mod 的 `herdr-app check`、`my-main.json` 與 `*.error`、六組 Node 測試（圖表、diff、插入到對話、檔案圖示、最近資料夾、圖表提示卡）（❌ 時 exit 1，可按 `ctrl-shift-l` 切回官方版面暫時恢復）；並以 `herdr/official-baseline.json`（只存官方檔案雜湊）偵測官方 `main`／`tabs`／`pane`／`files`／`spaces` 是否更新、Herdr 與 repo 備份是否一致（⚠️ 僅提醒）。
+Herdr 的自訂版面與 mod（Git 面板、圖表、diff、Files 插入到對話與檔案圖示、新增 space 選資料夾等）、`/codex` skill、一鍵安裝與檢查腳本，已搬到獨立的私人 repo **[herdr-config](https://github.com/charles0103/herdr-config)**，請以該 repo 為準。本 repo 只保留 Claude Code 狀態列設定；搬移前的歷史仍可在 git 紀錄中找到。
 
 ## 新電腦安裝步驟（Windows）
 

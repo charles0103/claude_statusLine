@@ -1,5 +1,10 @@
 # Claude Code 狀態列修改紀錄
 
+## 2026-11-10 — Herdr 自訂設定搬到獨立 repo
+
+- `herdr/`（6 個 mod、`my-main.json`、檢查腳本、基準檔）與 `claude/skills/codex/` 已搬到私人 repo [herdr-config](https://github.com/charles0103/herdr-config)，並新增一鍵安裝腳本 `install.ps1`（同名項目先備份、`-DryRun` 預覽）。
+- 本 repo 移除上述資料夾，README 改為指向新 repo；以下 2026-11-10 的 Herdr 相關紀錄保留作歷史。
+
 ## 2026-11-10 — 新增 /codex skill（Herdr 中與 Codex 協作）
 
 - `claude/skills/codex/SKILL.md`（安裝於 `~/.claude/skills/codex/`）：輸入 `/codex` 後，在同一個 Herdr tab 右側 pane 開啟／沿用 Codex，寫需求書交辦、`hc wait` 背景等待、Claude 自行驗證，使用者同意才提交。
