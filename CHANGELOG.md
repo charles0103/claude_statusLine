@@ -1,5 +1,11 @@
 # Claude Code 狀態列修改紀錄
 
+## 2026-11-10 — 新增 Herdr 更新後檢查腳本
+
+- `herdr/check-herdr.ps1`：檢查 Herdr 狀態、自訂 mod、版面、錯誤檔、Node 測試；偵測官方 `main`／`tabs`／`pane` 變動與備份一致性。
+- `herdr/official-baseline.json`：Herdr 0.1.14 官方檔案的 SHA256 基準（不含原始碼）；重新套用改動後以 `-UpdateBaseline` 更新。
+- 由 Codex 撰寫，Claude 審查並實際執行：11 項全部通過。
+
 ## 2026-11-10 — Herdr 右側面板 Changes 與圖表上下並排
 
 - 標籤列 Changes、圖表兩顆按鈕合併為「Git」；右側面板上方 Changes、下方圖表（預設 1:2，可拖曳）。Files 維持獨立。

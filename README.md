@@ -68,6 +68,15 @@ herdr-app do layout.switch --name my-main
 - 切回原版：`ctrl-shift-l`；移除：刪掉上表五項。
 - 測試：`node herdr\mods\git-graph\files.test.mjs <repo 路徑>`、`node herdr\mods\git-diff\diff.test.mjs`
 
+### Herdr 更新後的檢查
+
+```powershell
+.\herdr\check-herdr.ps1                  # 一般檢查
+.\herdr\check-herdr.ps1 -UpdateBaseline  # 重新 clone 並套用改動後，更新官方基準
+```
+
+檢查 Herdr 狀態、四個自訂 mod 的 `herdr-app check`、`my-main.json` 與 `*.error`、Node 測試（❌ 時 exit 1，可按 `ctrl-shift-l` 切回官方版面暫時恢復）；並以 `herdr/official-baseline.json`（只存官方檔案雜湊）偵測官方 `main`／`tabs`／`pane` 是否更新、Herdr 與 repo 備份是否一致（⚠️ 僅提醒）。
+
 ## 新電腦安裝步驟（Windows）
 
 ### 1. 安裝 Nerd Font 字型（狀態列圖示需要）
