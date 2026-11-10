@@ -162,7 +162,9 @@ if (-not $node) { Add-Result '⚠️' 'Node 測試' '找不到 node，已略過�
 else {
     foreach ($test in @(
         @{Name='圖表檔案清單測試'; Arguments=@((Join-Path $PSScriptRoot 'mods/git-graph/files.test.mjs'),$repoRoot)},
-        @{Name='差異解析測試'; Arguments=@((Join-Path $PSScriptRoot 'mods/git-diff/diff.test.mjs'))}
+        @{Name='差異解析測試'; Arguments=@((Join-Path $PSScriptRoot 'mods/git-diff/diff.test.mjs'))},
+        @{Name='插入到對話路徑測試'; Arguments=@((Join-Path $PSScriptRoot 'mods/my-files/mention.test.mjs'))},
+        @{Name='檔案圖示測試'; Arguments=@((Join-Path $PSScriptRoot 'mods/my-files/icons.test.mjs'))}
     )) {
         try {
             $result = Invoke-ReadOnlyProcess $node.Source $test.Arguments

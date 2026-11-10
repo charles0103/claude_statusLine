@@ -1,5 +1,10 @@
 # Claude Code 狀態列修改紀錄
 
+## 2026-11-10 — 檢查腳本納入 my-files 測試
+
+- `herdr/check-herdr.ps1` 新增「插入到對話路徑測試」（`mention.test.mjs`）與「檔案圖示測試」（`icons.test.mjs`），共 14 項檢查。
+- 驗證：正常執行 14 項全 ✅；暫存複本模擬圖示測試失敗時顯示 ❌、exit 1。
+
 ## 2026-11-10 — Herdr Files 面板依檔案類型顯示圖示
 
 - `my-files` 新增 14 個自繪彩色 SVG 圖示（Markdown、Python、JS、TS、JSON、設定檔、Shell、Git、授權、圖片、文字、HTML、CSS、壓縮檔），依副檔名／檔名對應（`icons.js`，不分大小寫）；未知類型與資料夾沿用原圖示。
