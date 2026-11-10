@@ -1,5 +1,12 @@
 # Claude Code 狀態列修改紀錄
 
+## 2026-11-10 — 修復 Codex 沙箱無法啟動 PowerShell（商店版 PS7）
+
+- 現象：Codex `unelevated` 沙箱啟動商店版 `pwsh.exe` 失敗，`CreateProcessAsUserW failed: 5`。
+- 處理：改裝官方 MSI 版 PS7.6.9、Machine PATH 置頂，完整重啟 Codex（舊 app-server 會沿用舊 shell 路徑）。
+- VS Code 三個終端 profile 由 `source` 改為明確 `path`，統一使用 MSI 版。
+- 已驗證沙箱日誌顯示 MSI 版 `SUCCESS`。細節見 `POWERSHELL_SANDBOX_DIAGNOSTIC.md`。
+
 ## 2026-06-15 — 修復 psmux 終端中文「複製出去」亂碼
 
 ### 問題
