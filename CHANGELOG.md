@@ -1,5 +1,13 @@
 # Claude Code 狀態列修改紀錄
 
+## 2026-11-10 — Herdr 新增 space 先選資料夾
+
+- 新增 `herdr/mods/my-spaces/`（官方 `spaces` 側欄的複本）：「+」先彈出選單——最近的資料夾（最多 8 筆）、「開啟資料夾…」（`pickFolder` 呼叫 Windows 選擇資料夾視窗）、「從家目錄開始」。
+- 原因：原本 `space.new` 不帶資料夾，新 space 一律從家目錄開始。
+- 快捷鍵 `ctrl-shift-n`、`keys.json` 未修改（保留 Herdr 日後自動加入新預設快捷鍵）；其他機器的 space 不提供本機選擇視窗。
+- `my-main.json` 的 Spaces 側欄改用 `my-spaces`；檢查腳本納入 `my-spaces`、官方 `spaces` 基準與「最近資料夾測試」，共 16 項。
+- 驗證：`recent.test.mjs` 通過、檢查腳本 16 項全 ✅；使用者實測最近資料夾與開啟資料夾皆正常。
+
 ## 2026-11-10 — 檢查腳本納入 my-files 測試
 
 - `herdr/check-herdr.ps1` 新增「插入到對話路徑測試」（`mention.test.mjs`）與「檔案圖示測試」（`icons.test.mjs`），共 14 項檢查。
