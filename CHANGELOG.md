@@ -1,5 +1,11 @@
 # Claude Code 狀態列修改紀錄
 
+## 2026-11-10 — Herdr diff pane 標題改為「差異」
+
+- 新增 `herdr/mods/my-pane/`（官方 `pane` 標題列的複本）：git-diff pane 標題顯示「差異 · 檔名」，其他 pane 不變。
+- `my-main.json` 的 pane 標題列改用 `my-pane`；官方檔案未修改。
+- 淺色主題下 diff 行號加深（深色不變）；續行與內容對齊。
+
 ## 2026-11-10 — Herdr 圖表面板：點檔案顯示 diff
 
 - 新增 `herdr/mods/git-diff/`：點圖表中的檔案，在終端機右側開 diff pane（雙欄行號、紅綠底色、長行自動換行），點其他檔案沿用同一個 pane。
